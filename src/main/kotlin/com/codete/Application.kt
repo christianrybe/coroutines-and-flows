@@ -2,6 +2,7 @@ package com.codete
 
 import com.codete.Spaceship.Companion.reportCleaning
 import com.codete.coroutine.SuspendingShip
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 
@@ -59,10 +60,20 @@ fun initiateStart2() {
 
 suspend fun initiateStart3() = coroutineScope {
     val engineDeferred = async { suspendingShip.startEngines() }
-    val cleaningFuture = async { suspendingShip.autoClean() }
+    val cleaningDeferred = async { suspendingShip.autoClean() }
 
     println("Coroutines started!")
 
     spaceship.setOff(engineDeferred.await())
-    reportCleaning(cleaningFuture.await())
+    reportCleaning(cleaningDeferred.await())
+}
+
+suspend fun initiateStart4() = coroutineScope {
+    val engineDeferred = async(Dispatchers.IO) { suspendingShip.startEngines() }
+    val cleaningDeferred = async(Dispatchers.IO) { suspendingShip.autoClean() }
+
+    println("Coroutines started!")
+
+    spaceship.setOff(engineDeferred.await())
+    reportCleaning(cleaningDeferred.await())
 }

@@ -1,17 +1,16 @@
 package com.codete.coroutine
 
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 
 class SuspendingShip {
 
-    suspend fun startEngines(): Int = coroutineScope {
+    suspend fun startEngines(): Int {
         println("Starting engines")
         delay(700)
-        190
+        return 190
     }
 
-    suspend fun autoClean(): Boolean = coroutineScope {
+    suspend fun autoClean(): Boolean {
         println("Starting cleaning")
         delay(500)
         throw RuntimeException()

@@ -7,22 +7,22 @@ class Spaceship {
 
     fun startEngines(): CompletableFuture<Int> {
         return CompletableFuture.supplyAsync {
-            println("Starting engines from future")
-            Thread.sleep(700)
+            println("Starting engines from Completable Future")
+            Thread.sleep(700) //heavy work
             120
         }
     }
 
     fun startAutoCleaning(): CompletableFuture<Boolean> {
         return CompletableFuture.supplyAsync {
-            println("Starting cleaning")
-            Thread.sleep(500)
+            println("Starting cleaning from Completable Future")
+            Thread.sleep(500) //takes a while too
             throw RuntimeException()
         }
     }
 
     fun setOff(speed: Int) {
-        println("Spaceship is taking off with the initial speed of $speed")
+        println("Spaceship is taking off with speed: $speed")
     }
 
     companion object {

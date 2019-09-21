@@ -45,11 +45,16 @@ fun initiateStart1() {
 }
 
 fun initiateStart2() {
-    spaceship.startEngines()
-        .thenCombine(spaceship.startAutoCleaning()) { speed, two ->
-            spaceship.setOff(speed)
-            two
-        }.whenComplete { result, failure -> if (failure == null) reportCleaning(result) }
+    reportCleaning(
+        spaceship
+            .startEngines()
+            .thenCombine(spaceship.startAutoCleaning())
+            { speed, isCleaningOk ->
+                spaceship.setOff(speed)
+                isCleaningOk
+            }
+            .get()
+    )
 }
 
 suspend fun initiateStart3() = coroutineScope {

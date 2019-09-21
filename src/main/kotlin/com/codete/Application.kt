@@ -1,18 +1,33 @@
 package com.codete
 
 import com.codete.Spaceship.Companion.reportCleaning
+import com.codete.coroutine.SuspendingShip
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 
 val spaceship = Spaceship()
+val suspendingShip = SuspendingShip()
 
-fun main() {
+suspend fun main() {
     try {
+        println("==========FIRST ATTEMPT=========")
         initiateStart1()
+        Thread.sleep(700)
     } catch (e: Exception) {
         e.printStackTrace()
     }
 
     try {
+        println("==========SECOND ATTEMPT=========")
         initiateStart2()
+        Thread.sleep(700)
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+
+    try {
+        println("==========THIRD ATTEMPT=========")
+        initiateStart3()
     } catch (e: Exception) {
         e.printStackTrace()
     }
@@ -23,8 +38,10 @@ fun initiateStart1() {
     val engineFuture = spaceship.startEngines()
     val cleaningFuture = spaceship.startAutoCleaning()
 
-    engineFuture.whenComplete { speed, failure -> if (failure == null) spaceship.setOff(speed) }
-    cleaningFuture.whenComplete { result, failure -> if (failure == null) reportCleaning(result) }
+    println("Futures started!")
+
+    spaceship.setOff(engineFuture.get())
+    reportCleaning(cleaningFuture.get())
 }
 
 fun initiateStart2() {
@@ -33,4 +50,14 @@ fun initiateStart2() {
             spaceship.setOff(speed)
             two
         }.whenComplete { result, failure -> if (failure == null) reportCleaning(result) }
+}
+
+suspend fun initiateStart3() = coroutineScope {
+    val engineDeferred = async { suspendingShip.startEngines() }
+    val cleaningFuture = async { suspendingShip.autoClean() }
+
+    println("Coroutines started!")
+
+    spaceship.setOff(engineDeferred.await())
+    reportCleaning(cleaningFuture.await())
 }

@@ -5,16 +5,20 @@ import java.util.concurrent.CompletableFuture
 
 class Spaceship {
 
-    //    val engines: Map<Int, Engine> = (1..ENGINES_COUNT).zip(generateSequence { Engine() }.take(ENGINES_COUNT).toList()).toMap()
     fun startEngines(): CompletableFuture<Int> {
-//        Thread.sleep(5000)
-        return CompletableFuture.supplyAsync { 120 }
+        return CompletableFuture.supplyAsync {
+            println("Starting engines from future")
+            Thread.sleep(700)
+            120
+        }
     }
 
-    fun startAutoCleaning(): CompletableFuture<Result> {
-        val completableFuture = CompletableFuture<Result>()
-        completableFuture.completeExceptionally(RuntimeException())
-        return completableFuture
+    fun startAutoCleaning(): CompletableFuture<Boolean> {
+        return CompletableFuture.supplyAsync {
+            println("Starting cleaning")
+            Thread.sleep(500)
+            throw RuntimeException()
+        }
     }
 
     fun setOff(speed: Int) {
@@ -24,7 +28,7 @@ class Spaceship {
     companion object {
         const val ENGINES_COUNT = 5
 
-        fun reportCleaning(result: Result?) {
+        fun reportCleaning(result: Boolean?) {
             println("Cleaning completed with result $result")
         }
     }

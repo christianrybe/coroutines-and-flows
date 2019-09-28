@@ -78,20 +78,19 @@ private fun getReadings2() {
         println("Waiting for the coroutine to launch...")
         delay(500)
 
-        println("Starting blocking measurements...")
-        val readings = SensorController.getAllReadings()
-        println(readings)
-        readings.forEach {
-            Thread.sleep(1000) //Mark's validation
-            println(it)
-        }
+//        println("Starting blocking measurements...")
+//        val readings = SensorController.getAllReadings()
+//        println(readings)
+//        readings.forEach {
+//            Thread.sleep(1000) //Mark's validation
+//            println(it)
+//        }
 
         println("Starting non-blocking measurements...")
-        val flow = SensorController.getAllReadingsInFlow()
-        println(flow)
-        flow
-            .validateMeasurement()
-            .collect { println(it) }
+        val originalFlow =
+            SensorController.getAllReadingsInFlow()
+        val validatedFlow: Flow<SensorReading> = originalFlow.validateMeasurement()
+        val unit: Unit = validatedFlow.collect { println(it) }
     }
 }
 
@@ -100,4 +99,5 @@ fun Flow<SensorReading>.validateMeasurement(): Flow<SensorReading> =
     transform { sensorReading ->
         delay(1000)
         if (sensorReading.value > 1000) throw IllegalStateException()
+        emit(sensorReading)
     }

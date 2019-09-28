@@ -40,34 +40,8 @@ object SensorController {
     }
 }
 
-fun main() {
-//    getReadings1()
-    getReadings2()
-}
-
-private fun getReadings1() {
-    runBlocking {
-        launch {
-            for (i in 1..8) {
-                println("Actively correcting path...")
-                delay(500)
-            }
-        }
-        println("Waiting for the coroutine to launch...")
-        delay(500)
-
-        println("Starting blocking measurements...")
-        val readings = SensorController.getAllReadings()
-        println(readings)
-
-        println("Starting non-blocking measurements...")
-        val flow = SensorController.getAllReadingsInFlow()
-        flow.collect { println(it) }
-    }
-}
-
 @ExperimentalCoroutinesApi
-private fun getReadings2() {
+fun main() {
     runBlocking {
         launch {
             repeat(15) {
@@ -78,13 +52,13 @@ private fun getReadings2() {
         println("Waiting for the coroutine to launch...")
         delay(500)
 
-//        println("Starting blocking measurements...")
-//        val readings = SensorController.getAllReadings()
-//        println(readings)
-//        readings.forEach {
-//            Thread.sleep(1000) //Mark's validation
-//            println(it)
-//        }
+        println("Starting blocking measurements...")
+        val readings = SensorController.getAllReadings()
+        println(readings)
+        readings.forEach {
+            Thread.sleep(1000) //Mark's validation
+            println(it)
+        }
 
         println("Starting non-blocking measurements...")
         val originalFlow =

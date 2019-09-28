@@ -28,12 +28,8 @@ class Spaceship {
         println("Spaceship is taking off with speed: $speed")
     }
 
-    companion object {
-        const val ENGINES_COUNT = 5
-
-        fun reportCleaning(result: Boolean?) {
-            println("Cleaning completed with result $result")
-        }
+    fun reportCleaning(result: Boolean?) {
+        println("Cleaning completed with result $result")
     }
 }
 
@@ -72,20 +68,17 @@ fun initiateStart1() {
     println("Futures started!")
 
     spaceship.setOff(engineFuture.get())
-    Spaceship.reportCleaning(cleaningFuture.get())
+    spaceship.reportCleaning(cleaningFuture.get())
 }
 
 fun initiateStart2() {
-    Spaceship.reportCleaning(
-        spaceship
-            .startEngines()
-            .thenCombine(spaceship.startAutoCleaning())
-            { speed, isCleaningOk ->
-                spaceship.setOff(speed)
-                isCleaningOk
-            }
-            .get()
-    )
+    val engineAndCleaningFuture = spaceship.startEngines()
+        .thenCombine(spaceship.startAutoCleaning())
+        { speed, isCleaningOk ->
+            spaceship.setOff(speed)
+            isCleaningOk
+        }
+    spaceship.reportCleaning(engineAndCleaningFuture.get())
 }
 
 suspend fun initiateStart3() = coroutineScope {
@@ -95,5 +88,5 @@ suspend fun initiateStart3() = coroutineScope {
     println("Coroutines started!")
 
     spaceship.setOff(engineDeferred.await())
-    Spaceship.reportCleaning(cleaningDeferred.await())
+    spaceship.reportCleaning(cleaningDeferred.await())
 }
